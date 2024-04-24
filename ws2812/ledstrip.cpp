@@ -1,7 +1,7 @@
 #include "ledstrip.h"
 
 
-void LEDStrip::show(std::vector<SPIBit>& spi_bits) const
+void LEDStrip::create_spi_bits(std::vector<SPIBit>& spi_bits) const
 {
     for (auto grb: _grbs) {
         auto bits = grb.bits();

@@ -18,7 +18,7 @@ public:
     const GRB& operator[](std::size_t i) const { return _grbs[i]; }
     GRB& operator[](std::size_t i) { return _grbs[i]; }
 
-    void show(std::vector<SPIBit>&) const;
+    void create_spi_bits(std::vector<SPIBit>&) const;
 
 private:
     std::vector<GRB> _grbs;
