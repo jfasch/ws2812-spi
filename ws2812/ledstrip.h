@@ -23,3 +23,5 @@ public:
 private:
     std::vector<GRB> _grbs;
 };
+
+std::vector<uint8_t> spi_bits_to_bitstream(const std::vector<SPIBit>&);
