@@ -18,7 +18,7 @@ void LEDStrip::create_spi_bits(std::vector<SPIBit>& spi_bits) const
     }
 }
 
-std::vector<uint8_t> spi_bits_to_bitstream(const std::vector<SPIBit>& spi_bits)
+std::vector<uint8_t> spibits_to_bitstream(const std::vector<SPIBit>& spi_bits)
 {
     // size_t nbytes = spi_bits.size() * 5 / 8;
 

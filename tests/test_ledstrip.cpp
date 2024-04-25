@@ -109,7 +109,7 @@ TEST(ledstrip_suite, bitstream)
     std::vector<SPIBit> spi_bits;
     led_strip.create_spi_bits(spi_bits);
 
-    std::vector<uint8_t> bitstream = spi_bits_to_bitstream(spi_bits);
+    std::vector<uint8_t> bitstream = spibits_to_bitstream(spi_bits);
 
     ASSERT_EQ(bitstream[ 0], 0b11000110);
     // ------------------------0
@@ -190,5 +190,6 @@ TEST(ledstrip_suite, bitstream)
     ASSERT_EQ(bitstream[29], 0b00011100);
     // ---------------------------47
 
-    ASSERT_FALSE(true); // reset -> 0-"padding" at the end
+    // termination ("reset", as in datasheet)
+    ASSERT_EQ(bitstream[30], 0b00000000);
 }
