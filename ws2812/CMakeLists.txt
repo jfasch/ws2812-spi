@@ -5,6 +5,8 @@ ADD_LIBRARY(
   grb.cpp
   ledstrip.h
   ledstrip.cpp
+  spi.h
+  spi.cpp
 )
 
 TARGET_INCLUDE_DIRECTORIES(

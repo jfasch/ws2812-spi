@@ -37,6 +37,8 @@ std::vector<uint8_t> spibits_to_bitstream(const std::vector<SPIBit>& spi_bits)
         }
     }
 
+    // terminate bitstream ("reset", as per datasheet). this adds 8
+    // bits which is more than 5.
     bitstream.push_back(0);
 
     return bitstream;
