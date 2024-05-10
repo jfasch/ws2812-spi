@@ -13,6 +13,10 @@ public:
     GRB(uint8_t g, uint8_t r, uint8_t b)
     : _g(g), _r(r), _b(b) {}
 
+    uint8_t g() const { return _g; }
+    uint8_t r() const { return _r; }
+    uint8_t b() const { return _b; }
+
     bool operator==(const GRB& rhs) const
     {
         return _g == rhs._g && _r == rhs._r && _b == rhs._b;

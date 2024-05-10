@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 
 
-TEST(grb_suite, one)
+TEST(grb_suite, basic)
 {
     GRB grb(150, 244, 100);
 

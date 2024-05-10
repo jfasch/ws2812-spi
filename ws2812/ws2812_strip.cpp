@@ -1,10 +1,18 @@
-#include "ledstrip.h"
+#include "ws2812_strip.h"
 
 #include <iostream>
 using namespace std;
 
 
-std::vector<bool> LEDStrip::create_logical_bitstream() const
+WS2812Strip::WS2812Strip(std::size_t n, Profile p)
+: _grbs(n),
+  _mem(n*24+20),
+  _profile(p) 
+{
+    
+}
+
+std::vector<bool> WS2812Strip::create_logical_bitstream() const
 {
     std::vector<bool> logical_bitstream;
 

@@ -1,5 +1,5 @@
 #include <spi.h>
-#include <ledstrip.h>
+#include <ws2812_strip.h>
 
 #include <thread>
 #include <chrono>
@@ -10,7 +10,7 @@ int main(int argc, char** argv)
 {
     SPIDevice spidev(argv[1]);
 
-    LEDStrip led_strip(12);
+    WS2812Strip led_strip(12);
     while (true) {
         led_strip[ 0] = GRB(255, 0, 0);
         led_strip[ 1] = GRB(0, 255, 0);

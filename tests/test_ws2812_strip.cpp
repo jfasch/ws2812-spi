@@ -1,12 +1,12 @@
-#include <ledstrip.h>
+#include <ws2812_strip.h>
 
 #include <gtest/gtest.h>
 #include <bitset>
 
 
-TEST(ledstrip_suite, default_value)
+TEST(ws2812_strip, default_value)
 {
-    const LEDStrip led_strip(2);
+    const WS2812Strip led_strip(2);
 
     ASSERT_EQ(led_strip[0], GRB());
     ASSERT_EQ(led_strip[1], GRB());
@@ -15,9 +15,9 @@ TEST(ledstrip_suite, default_value)
     ASSERT_EQ(led_strip[1].bits(), std::bitset<24>());
 }
 
-TEST(ledstrip_suite, set_values)
+TEST(ws2812_strip, set_values)
 {
-    LEDStrip led_strip(2);
+    WS2812Strip led_strip(2);
     led_strip[0] = GRB(1, 2, 3);
     ASSERT_EQ(led_strip[0], GRB(1, 2, 3));
 
@@ -25,9 +25,9 @@ TEST(ledstrip_suite, set_values)
     ASSERT_EQ(led_strip[1], GRB(3, 4, 5));
 }
 
-TEST(ledstrip_suite, create_logical_bitstream)
+TEST(ws2812_strip, create_logical_bitstream)
 {
-    LEDStrip led_strip(2);
+    WS2812Strip led_strip(2);
     led_strip[0] = GRB(1, 2, 3);
     led_strip[1] = GRB(3, 4, 5);
 
@@ -99,9 +99,9 @@ TEST(ledstrip_suite, create_logical_bitstream)
     ASSERT_EQ(logical_bits[47], true);
 }
 
-TEST(ledstrip_suite, bitstream)
+TEST(ws2812_strip, bitstream)
 {
-    LEDStrip led_strip(2);
+    WS2812Strip led_strip(2);
     led_strip[0] = GRB(1, 2, 3);
     led_strip[1] = GRB(3, 4, 5);
 
@@ -196,4 +196,103 @@ TEST(ledstrip_suite, bitstream)
     ASSERT_EQ(spi_bits[65], 0b00000000);
     ASSERT_EQ(spi_bits[66], 0b00000000);
     ASSERT_EQ(spi_bits[67], 0b00000000);
+}
+
+TEST(ws2812_strip, bitstream_builtin_raspberry)
+{
+    WS2812Strip led_strip(2, WS2812Strip::RASPBERRY);
+
+    ASSERT_EQ(led_strip.mem().size(), 2/*n LEDS*/ * 3/*GRB/LED*/ * 8  + 20/*0-bytes for reset*/);
+    ASSERT_EQ(led_strip[0], GRB(0,0,0));
+    ASSERT_EQ(led_strip[1], GRB(0,0,0));
+
+    led_strip[0] = GRB(1, 2, 3);
+    led_strip[1] = GRB(3, 4, 5);
+
+    // [0]
+
+    // g/1
+    ASSERT_EQ(led_strip.mem()[ 0], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[ 1], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[ 2], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[ 3], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[ 4], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[ 5], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[ 6], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[ 7], 0b11111110);
+
+    // r/2
+    ASSERT_EQ(led_strip.mem()[ 8], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[ 9], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[10], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[11], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[12], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[13], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[14], 0b11111110);
+    ASSERT_EQ(led_strip.mem()[15], 0b11100000);
+
+    // b/3
+    ASSERT_EQ(led_strip.mem()[16], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[17], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[18], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[19], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[20], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[21], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[22], 0b11111110);
+    ASSERT_EQ(led_strip.mem()[23], 0b11111110);
+
+
+    // [1]
+
+    // g/3
+    ASSERT_EQ(led_strip.mem()[24], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[25], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[26], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[27], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[28], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[29], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[30], 0b11111110);
+    ASSERT_EQ(led_strip.mem()[31], 0b11111110);
+
+    // r/4
+    ASSERT_EQ(led_strip.mem()[32], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[33], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[34], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[35], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[36], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[37], 0b11111110);
+    ASSERT_EQ(led_strip.mem()[38], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[39], 0b11100000);
+
+    // b/5
+    ASSERT_EQ(led_strip.mem()[40], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[41], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[42], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[43], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[44], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[45], 0b11111110);
+    ASSERT_EQ(led_strip.mem()[46], 0b11100000);
+    ASSERT_EQ(led_strip.mem()[47], 0b11111110);
+
+    // termination ("reset", as in datasheet)
+    ASSERT_EQ(led_strip.mem()[48], 0b00000000);
+    ASSERT_EQ(led_strip.mem()[49], 0b00000000);
+    ASSERT_EQ(led_strip.mem()[50], 0b00000000);
+    ASSERT_EQ(led_strip.mem()[51], 0b00000000);
+    ASSERT_EQ(led_strip.mem()[52], 0b00000000);
+    ASSERT_EQ(led_strip.mem()[53], 0b00000000);
+    ASSERT_EQ(led_strip.mem()[54], 0b00000000);
+    ASSERT_EQ(led_strip.mem()[55], 0b00000000);
+    ASSERT_EQ(led_strip.mem()[56], 0b00000000);
+    ASSERT_EQ(led_strip.mem()[57], 0b00000000);
+    ASSERT_EQ(led_strip.mem()[58], 0b00000000);
+    ASSERT_EQ(led_strip.mem()[59], 0b00000000);
+    ASSERT_EQ(led_strip.mem()[60], 0b00000000);
+    ASSERT_EQ(led_strip.mem()[61], 0b00000000);
+    ASSERT_EQ(led_strip.mem()[62], 0b00000000);
+    ASSERT_EQ(led_strip.mem()[63], 0b00000000);
+    ASSERT_EQ(led_strip.mem()[64], 0b00000000);
+    ASSERT_EQ(led_strip.mem()[65], 0b00000000);
+    ASSERT_EQ(led_strip.mem()[66], 0b00000000);
+    ASSERT_EQ(led_strip.mem()[67], 0b00000000);
 }

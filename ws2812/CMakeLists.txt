@@ -3,8 +3,8 @@ ADD_LIBRARY(
 
   grb.h
   grb.cpp
-  ledstrip.h
-  ledstrip.cpp
+  ws2812_strip.h
+  ws2812_strip.cpp
   spi.h
   spi.cpp
 )
