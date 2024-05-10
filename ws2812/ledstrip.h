@@ -6,10 +6,6 @@
 #include <cstddef>
 
 
-using SPIBit = std::bitset<5>;
-static const SPIBit SPI_B0 = 0b11000;
-static const SPIBit SPI_B1 = 0b11100;
-
 class LEDStrip
 {
 public:
@@ -18,10 +14,10 @@ public:
     const GRB& operator[](std::size_t i) const { return _grbs[i]; }
     GRB& operator[](std::size_t i) { return _grbs[i]; }
 
-    void create_spi_bits(std::vector<SPIBit>&) const;
+    std::vector<bool> create_logical_bitstream() const;
 
 private:
     std::vector<GRB> _grbs;
 };
 
-std::vector<uint8_t> spibits_to_bitstream(const std::vector<SPIBit>&);
+std::vector<uint8_t> logical_to_spi(const std::vector<bool>&, uint8_t low, uint8_t high);

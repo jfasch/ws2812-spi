@@ -24,11 +24,11 @@ SPIDevice::~SPIDevice()
 
 void SPIDevice::write_bitstream(const std::vector<uint8_t>& bits)
 {
-	struct spi_ioc_transfer tr = {
+    struct spi_ioc_transfer tr = {
         .tx_buf = (unsigned long)&bits[0],
         .len = (uint32_t)bits.size(),
-        .speed_hz = 4000000,
-	};
+        .speed_hz = 17000000,
+    };
 
     int ret = ioctl(_fd, SPI_IOC_MESSAGE(1), &tr);
 
