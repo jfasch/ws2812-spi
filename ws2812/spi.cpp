@@ -22,12 +22,12 @@ SPIDevice::~SPIDevice()
     close(_fd);
 }
 
-void SPIDevice::write_bitstream(const std::vector<uint8_t>& bits)
+void SPIDevice::write(const WS2812Strip& s)
 {
     struct spi_ioc_transfer tr = {
-        .tx_buf = (unsigned long)&bits[0],
-        .len = (uint32_t)bits.size(),
-        .speed_hz = 17000000,
+        .tx_buf = (unsigned long)&s.mem()[0],
+        .len = (uint32_t)s.mem().size(),
+        .speed_hz = s.profile().frequency_hz,
     };
 
     int ret = ioctl(_fd, SPI_IOC_MESSAGE(1), &tr);

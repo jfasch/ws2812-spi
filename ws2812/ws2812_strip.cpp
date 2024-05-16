@@ -1,66 +1,69 @@
 #include "ws2812_strip.h"
 
+#include <bitset>
+
+// todo jjj
 #include <iostream>
 using namespace std;
 
 
+const WS2812Strip::Profile WS2812Strip::RASPBERRY = { 17000000, 50, 0b11111110, 0b11100000 };
+
 WS2812Strip::WS2812Strip(std::size_t n, Profile p)
-: _grbs(n),
-  _mem(n*24+20),
+: _mem(n*24 + p.n_zero_bytes),
   _profile(p) 
 {
-    
+    for (size_t i=0; i<n*24; i++)
+        _mem[i] = _profile.ZERO;
 }
 
-std::vector<bool> WS2812Strip::create_logical_bitstream() const
-{
-    std::vector<bool> logical_bitstream;
+GRB WS2812Strip::get(size_t pos) const
+{ 
+    size_t off = pos * 24;
 
-    for (auto grb: _grbs) {
-        auto bits = grb.bits();
-        for (size_t i=0; i<bits.size(); i++) {
-            auto bit = bits[i];
-            if (bit)
-                logical_bitstream.push_back(true);
-            else
-                logical_bitstream.push_back(false);
-        }
-    }
+    std::bitset<8> g, r, b;
 
-    return logical_bitstream;
-}
-
-std::vector<uint8_t> logical_to_spi(
-    const std::vector<bool>& logical_bits, 
-    uint8_t low, uint8_t high)
-{
-    std::vector<uint8_t> spi_bitstream;
-
-    // uint8_t byte = 0;
-    // int byte_pos = 7;
-    for (auto logical_bit: logical_bits) {
-        // std::bitset<5> bit = logical_bit? HIGH: LOW;
-
-        // for (int i=4; i>=0; i--) {
-        //     if (bit[i])
-        //         byte |= (1<<byte_pos);
-        //     byte_pos--;
-        //     if (byte_pos == -1) {
-        //         spi_bitstream.push_back(byte);
-        //         byte = 0;
-        //         byte_pos = 7;
-        //     }
-        // }
-
-        if (logical_bit)
-            spi_bitstream.push_back(high);
+    for (int i=7; i>=0; i--)
+        if (_mem[off++] == _profile.ONE)
+            g[i] = true;
         else
-            spi_bitstream.push_back(low);
-    }
+            g[i] = false;
+    for (int i=7; i>=0; i--)
+        if (_mem[off++] == _profile.ONE)
+            r[i] = true;
+        else
+            r[i] = false;
+    for (int i=7; i>=0; i--)
+        if (_mem[off++] == _profile.ONE)
+            b[i] = true;
+        else
+            b[i] = false;
 
-    // terminate bitstream ("reset", as per datasheet, >50us)
-    for (int i=0; i<20; i++)
-        spi_bitstream.push_back(0);
+    return GRB(g.to_ulong(), r.to_ulong(), b.to_ulong());
+}
 
-    return spi_bitstream;
+void WS2812Strip::set(size_t pos, const GRB& grb)
+{
+    size_t off = pos * 24;
+
+    std::bitset<8> g = grb.g();
+    for (int i=7; i>=0; i--)
+        if (g[i])
+            _mem[off++] = _profile.ONE;
+        else
+            _mem[off++] = _profile.ZERO;
+
+    std::bitset<8> r = grb.r();
+    for (int i=7; i>=0; i--)
+        if (r[i])
+            _mem[off++] = _profile.ONE;
+        else
+            _mem[off++] = _profile.ZERO;
+
+    std::bitset<8> b = grb.b();
+    for (int i=7; i>=0; i--)
+        if (b[i])
+            _mem[off++] = _profile.ONE;
+        else
+            _mem[off++] = _profile.ZERO;
 }
