@@ -1,5 +1,5 @@
-#include <spi.h>
 #include <ws2812_strip.h>
+#include <spi.h>
 
 #include <thread>
 #include <chrono>

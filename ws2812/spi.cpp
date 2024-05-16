@@ -1,5 +1,6 @@
 #include "spi.h"
 
+#include <algorithm>
 #include <cstdio>
 #include <cassert>
 #include <fcntl.h>
@@ -24,16 +25,24 @@ SPIDevice::~SPIDevice()
 
 void SPIDevice::write(const WS2812Strip& s)
 {
-    struct spi_ioc_transfer tr = {
-        .tx_buf = (unsigned long)&s.mem()[0],
-        .len = (uint32_t)s.mem().size(),
-        .speed_hz = s.profile().frequency_hz,
-    };
+    const uint8_t* xfer_bytes = &s.mem()[0];
+    size_t remaining_bytes = s.mem().size();
 
-    int ret = ioctl(_fd, SPI_IOC_MESSAGE(1), &tr);
+    while (remaining_bytes) {
+        size_t xfer_size = std::min(remaining_bytes, 4096UL);
+        remaining_bytes -= xfer_size;
 
-    if (ret == -1) {
-        perror("ioctl(SPI_IOC_MESSAGE(1))");
-        assert(false);
+        struct spi_ioc_transfer tr = {
+            .tx_buf = (unsigned long)xfer_bytes,
+            .len = (uint32_t)xfer_size,
+            .speed_hz = s.profile().frequency_hz,
+        };
+
+        int ret = ioctl(_fd, SPI_IOC_MESSAGE(1), &tr);
+
+        if (ret == -1) {
+            perror("ioctl(SPI_IOC_MESSAGE(1))");
+            assert(false);
+        }
     }    
 }
