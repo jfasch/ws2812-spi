@@ -2,7 +2,6 @@
 
 #include "grb.h"
 
-#include <bitset>
 #include <vector>
 #include <cstddef>
 
@@ -25,53 +24,50 @@ public:
 
     GRB get(size_t pos) const
     { 
-        size_t off = pos * 24;
+        auto offp = &_mem[pos*24];
 
-        std::bitset<8> g, r, b;
+        uint8_t g{}, r{}, b{};
 
         for (int i=7; i>=0; i--)
-            if (_mem[off++] == _profile.ONE)
-                g[i] = true;
+            if (*offp++ == _profile.ONE)
+                g |= 1<<i;
             else
-                g[i] = false;
+                g &= ~(1<<i);
         for (int i=7; i>=0; i--)
-            if (_mem[off++] == _profile.ONE)
-                r[i] = true;
+            if (*offp++ == _profile.ONE)
+                r |= 1<<i;
             else
-                r[i] = false;
+                r &= ~(1<<i);
         for (int i=7; i>=0; i--)
-            if (_mem[off++] == _profile.ONE)
-                b[i] = true;
+            if (*offp++ == _profile.ONE)
+                b |= 1<<i;
             else
-                b[i] = false;
+                b &= ~(1<<i);
 
-        return GRB(g.to_ulong(), r.to_ulong(), b.to_ulong());
+        return GRB(g, r, b);
     }
 
     void set(size_t pos, const GRB& grb)
     {
-        size_t off = pos * 24;
+        auto offp = &_mem[pos*24];
 
-        std::bitset<8> g = grb.g();
         for (int i=7; i>=0; i--)
-            if (g[i])
-                _mem[off++] = _profile.ONE;
+            if (grb.g() & (1<<i))
+                *offp++ = _profile.ONE;
             else
-                _mem[off++] = _profile.ZERO;
+                *offp++ = _profile.ZERO;
 
-        std::bitset<8> r = grb.r();
         for (int i=7; i>=0; i--)
-            if (r[i])
-                _mem[off++] = _profile.ONE;
+            if (grb.r() & (1<<i))
+                *offp++ = _profile.ONE;
             else
-                _mem[off++] = _profile.ZERO;
+                *offp++ = _profile.ZERO;
 
-        std::bitset<8> b = grb.b();
         for (int i=7; i>=0; i--)
-            if (b[i])
-                _mem[off++] = _profile.ONE;
+            if (grb.b() & (1<<i))
+                *offp++ = _profile.ONE;
             else
-                _mem[off++] = _profile.ZERO;
+                *offp++ = _profile.ZERO;
     }
 
 
