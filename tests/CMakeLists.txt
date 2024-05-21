@@ -1,10 +1,7 @@
 ADD_EXECUTABLE(
   ws2812-spi-suite
 
-  test_grb.cpp
   test_ws2812_strip.cpp
-
-  test_bitset_comprehension.cpp
 )
 
 TARGET_LINK_LIBRARIES(

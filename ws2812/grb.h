@@ -22,22 +22,6 @@ public:
         return _g == rhs._g && _r == rhs._r && _b == rhs._b;
     }
 
-    std::bitset<24> bits() const
-    {
-        std::bitset<8> g(_g), r(_r), b(_b);
-        std::bitset<24> ret;
-        
-        int dstidx = 0;
-        for (int i=7; i>=0; --i)
-            ret[dstidx++] = g[i];
-        for (int i=7; i>=0; --i)
-            ret[dstidx++] = r[i];
-        for (int i=7; i>=0; --i)
-            ret[dstidx++] = b[i];
-
-        return ret;
-    }
-
 private:
     uint8_t _g;
     uint8_t _r;

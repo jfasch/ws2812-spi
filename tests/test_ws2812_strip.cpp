@@ -53,9 +53,6 @@ TEST(ws2812_strip, default_value)
     ASSERT_EQ(led_strip.get(0), GRB());
     ASSERT_EQ(led_strip.get(1), GRB());
 
-    ASSERT_EQ(led_strip.get(0).bits(), std::bitset<24>());
-    ASSERT_EQ(led_strip.get(1).bits(), std::bitset<24>());
-
     ASSERT_EQ(led_strip.mem().size(), 48 + WS2812Strip::RASPBERRY.n_zero_bytes);
     for (size_t i=0; i<48; i++)
         ASSERT_EQ(led_strip.mem()[i], WS2812Strip::RASPBERRY.ZERO) << i;
