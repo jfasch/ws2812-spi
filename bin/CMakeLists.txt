@@ -6,4 +6,3 @@ TARGET_LINK_LIBRARIES(kitt ws2812)
 
 ADD_EXECUTABLE(spi-loopback spi-loopback.cpp)
 
-
